@@ -1,0 +1,20 @@
+Package: BonusLab
+Type: Package
+Title: BonusLab - Group N
+Version: 0.2.0
+Authors@R: c(
+    person(given="Giulio", family="Collazuol", email="giuco986@student.liu.se",role = c("aut", "cre")), person("Valentin", "Rapetti", "marra415@student.liu.se",role = c("aut"))
+  )
+Description: [Add a description].
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Config/roxygen2/version: 8.1.0
+Depends: 
+    R (>= 3.5)
+Suggests: 
+    knitr,
+    rmarkdown
+Imports:
+    testthat
+VignetteBuilder: knitr
