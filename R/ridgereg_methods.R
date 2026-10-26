@@ -1,8 +1,8 @@
-#' Print linreg class object
+#' Print ridgereg class object
 #'
-#' Print the coefficients and the call function of the linear regression
+#' Print the coefficients and the call function of the ridge regression
 #'
-#' @param x linreg object
+#' @param x ridgereg object
 #' @param ... other options
 #' @export
 print.ridgereg <- function(x, ...){
@@ -16,22 +16,23 @@ print.ridgereg <- function(x, ...){
 }
 
 
-#' Predictions of linreg object
+#' Predictions of ridgereg object
 #'
-#' Returns all the predictions of the linreg object
+#' Returns all the predictions of the ridgereg object
 #'
-#' @param x linreg object
+#' @param x ridgereg object
 #' @return float list
+#' @param ... other options
 #' @export
-predict.ridgereg <- function(x){
+predict.ridgereg <- function(x, ...){
   return(x[["predicted"]])
 }
 
-#' Coefficients of linreg object
+#' Coefficients of ridgereg object
 #'
-#' Returns all the coefficients of the linreg object
+#' Returns all the coefficients of the ridgereg object
 #'
-#' @param object linreg object
+#' @param object ridgereg object
 #' @param ... other options
 #' @return float list
 #' @export
