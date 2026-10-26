@@ -11,12 +11,19 @@
 #' @return linreg class object
 #' @export
 ridgereg <- function(formula, data, lambda){
-  stopifnot(is.data.frame(data), class(formula)=="formula", is.numeric(lambda) && length(lambda)==1 && !(lambda < 0))
-  X<- model.matrix(formula, data)
+  stopifnot(is.data.frame(data), class(formula)=="formula", 
+            is.numeric(lambda) && length(lambda)==1 && !(lambda < 0))
+
+  X <- model.matrix(formula, data)
+  X <- scale(X, center = TRUE, scale = TRUE)[ , drop=FALSE]
+  X[, 1] <- 1
+  X <- X[, 1:2]
+
   y <- data[[all.vars(formula)[1]]]
-  X<- scale(X, center = TRUE, scale = TRUE)[,-1, drop = FALSE]
-  Beta <- solve(t(X) %*% X + lambda * diag(ncol(X))) %*% t(X) %*% y 
-  # check efficency 
+
+  # check efficiency of beta calculation
+  Beta <- solve(t(X) %*% X + lambda*diag(ncol(X))) %*% t(X) %*% y
+
   prediction <- X %*% Beta
   result <- list(coeffs = Beta,
                  predicted = prediction,
@@ -24,12 +31,3 @@ ridgereg <- function(formula, data, lambda){
   class(result) <- "ridgereg"
   return(result)
 }
-
-
-
-
-data(iris)
-formula <- Petal.Length ~ Species
-r <- ridgereg(formula, iris, 1)
-library(MASS)
-r1 <- lm.ridge(formula, iris,lambda =  1)
