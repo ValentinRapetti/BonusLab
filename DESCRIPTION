@@ -1,7 +1,7 @@
 Package: BonusLab
 Type: Package
 Title: BonusLab - Group N
-Version: 0.2.0
+Version: 0.7.0
 Authors@R: c(
     person(given="Giulio", family="Collazuol", email="giuco986@student.liu.se",role = c("aut", "cre")), person("Valentin", "Rapetti", "marra415@student.liu.se",role = c("aut"))
   )
@@ -16,5 +16,12 @@ Suggests:
     knitr,
     rmarkdown
 Imports:
-    testthat
+    testthat,
+    nycflights13,
+    MASS,
+    ggplot2,
+    dplyr,
+    caret,
+    mlbench
 VignetteBuilder: knitr
+Config/testthat/edition: 3

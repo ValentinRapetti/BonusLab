@@ -1,0 +1,48 @@
+---
+title: "Ridge Regression"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ridgereg}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+```{r setup}
+library(BonusLab)
+```
+
+# Introduction
+
+In this package we created a function for calculating the Ridge Regression in a given dataset.
+
+# Installation
+
+The package can be installed with the following command.
+
+> pak::pak("ValentinRapetti/BonusLab")
+
+# Functions and methods
+
+ridgereg(function, data, lambda) : Returns a ridgereg S3 object, which has the coefficients of the prediction and the predicted values.
+
+predict.ridgereg(x, ...) : Returns the predicted values of the regression.
+
+coeff.ridgereg(object, ...) : Returns the coefficients of the regression.
+
+visualize_airport_delays() : Creates two figures, "DelayVsLon.png" and "DelayVsLat.png" that are the result of the regressions of the average arrival delay, for the NYC 2013 dataset, and the latitude and longitude of the destination's airports.
+
+# Example
+
+```{r}
+data(iris)
+formula <- Petal.Length ~ Species
+
+output <- BonusLab::ridgereg(formula, iris, lambda=1)
+print(output)
+```

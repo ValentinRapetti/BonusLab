@@ -1,11 +1,12 @@
-library(ggplot2)
-library(nycflights13)
-library(dplyr)
-
-
+#' Create airport delay images
+#' 
+#' Creates two different images of the regression of the mean airport
+#' delay, with the aiport's latitude and longitude.
+#' 
+#' @export
 visualize_airport_delays <- function(){
-  data(flights)
-  data(airports)
+  flights <- nycflights13::flights
+  airports <- nycflights13::airports
 
   output <- flights |> 
               dplyr::rename(faa=dest) |>
@@ -39,17 +40,17 @@ visualize_airport_delays <- function(){
   names(df) <- c("latitude", "predictions")
   names(avg_df) <- c("latitude", "avg_delay")
 
-  g1 <- ggplot2::ggplot(data = avg_df, aes(x = latitude, y = avg_delay)) +
-    geom_point() +
-    geom_line(data = df, aes(x = latitude, y = predictions), color = "#00b9e7",linewidth = 1) +
-    labs(
+  g1 <- ggplot2::ggplot(data = avg_df, ggplot2::aes(x = latitude, y = avg_delay)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line(data = df, ggplot2::aes(x = latitude, y = predictions), color = "#00b9e7",linewidth = 1) +
+    ggplot2::labs(
       title = "Avg arrival delay vs airport's latitude",
       x = "Latitude",
       y = "Delay"
     ) +
-    theme_minimal()
+    ggplot2::theme_minimal()
 
-  ggplot2::ggsave("DelayVsLat.png", plot = g1, width = 6, height = 4)
+  ggplot2::ggsave("img/DelayVsLat.png", plot = g1, width = 6, height = 4)
 
 
   # -----------------------------------------
@@ -72,16 +73,16 @@ visualize_airport_delays <- function(){
   names(df) <- c("longitude", "predictions")
   names(avg_df) <- c("longitude", "avg_delay")
 
-  g2 <- ggplot2::ggplot(data = avg_df, aes(x = longitude, y = avg_delay)) +
-    geom_point() +
-    geom_line(data = df, aes(x = longitude, y = predictions), color = "#00b9e7",linewidth = 1) +
-    labs(
+  g2 <- ggplot2::ggplot(data = avg_df, ggplot2::aes(x = longitude, y = avg_delay)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line(data = df, ggplot2::aes(x = longitude, y = predictions), color = "#00b9e7",linewidth = 1) +
+    ggplot2::labs(
       title = "Avg arrival delay vs airport's longitude",
       x = "Longitude",
       y = "Delay"
     ) +
-    theme_minimal()
+    ggplot2::theme_minimal()
 
-  ggplot2::ggsave("DelayVsLon.png", plot = g2, width = 6, height = 4)
+  ggplot2::ggsave("img/DelayVsLon.png", plot = g2, width = 6, height = 4)
 
 }

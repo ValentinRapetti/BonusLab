@@ -17,7 +17,7 @@ ridgereg <- function(formula, data, lambda){
   X <- model.matrix(formula, data)
   X <- scale(X, center = TRUE, scale = TRUE)[ , drop=FALSE]
   X[, 1] <- 1
-  X <- X[, 1:2]
+  X <- X[, 1:ncol(X)]
 
   y <- data[[all.vars(formula)[1]]]
 
