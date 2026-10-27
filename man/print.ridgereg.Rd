@@ -2,16 +2,15 @@
 % Please edit documentation in R/ridgereg_methods.R
 \name{print.ridgereg}
 \alias{print.ridgereg}
-\title{Print a ridgereg Object}
+\title{Print ridgereg class object}
 \usage{
 \method{print}{ridgereg}(x, ...)
 }
 \arguments{
-\item{x}{a ridgereg object.}
+\item{x}{ridgereg object}
 
 \item{...}{other options}
 }
 \description{
-Prints the coefficients and the function call associated with a ridge
-regression model.
+Print the coefficients and the call function of the ridge regression
 }

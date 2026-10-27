@@ -31,7 +31,7 @@ The package can be installed with the following command.
 
 ridgereg(function, data, lambda) : Returns a ridgereg S3 object, which has the coefficients of the prediction and the predicted values.
 
-predict.ridgereg(x, ...) : Returns the predicted values of the regression.
+predict.ridgereg(x, newdata, ...) : Returns the predicted values of the regression. Can accept new data to base the predictions on.
 
 coeff.ridgereg(object, ...) : Returns the coefficients of the regression.
 
@@ -44,5 +44,105 @@ data(iris)
 formula <- Petal.Length ~ Species
 
 output <- BonusLab::ridgereg(formula, iris, lambda=1)
-print(output)
+output
 ```
+
+# Caret example
+
+In this section we will be showing an example of using the package 'caret' to predict the value ('medv') of houses in Boston, as given by the dataset BostonHousing from the mlbench library.
+
+We are going to use 10% of the data as test, leaving the rest for training our models. As we will also be using cross validation with 10-folds, we set up the control for the training.
+```{r}
+data(BostonHousing, package = "mlbench")
+
+train_index <- caret::createDataPartition(BostonHousing$medv,
+                                  p = .9,
+                                  list = FALSE)
+
+x_train <- BostonHousing[train_index, ]
+x_test <- BostonHousing[-train_index, ]
+
+# We do a 10-fold cv to validate the results
+control <- caret::trainControl(method = "cv", number = 10)
+```
+
+Now we want to use a forward selection model. For that we will use the method 'leapForward' for the training; loading the library 'leaps' is needed.
+As we cannot train with 0 covariates (only the intercept), we create the model by hand. 
+
+```{r}
+library(leaps)
+
+# Forward selection: consider models with 1 through 13 predictors
+forward_fit <- caret::train(
+  medv ~ .,
+  data = x_train,
+  method = "leapForward",
+  tuneGrid = expand.grid(nvmax = 1:13),
+  trControl = control
+)
+
+# Intercept-only model
+null_fit <- lm(medv ~ 1, data = x_train)
+
+cat("The best run was with", forward_fit$bestTune$nvmax, "parameters\n")
+```
+
+When using our ridge regressor, we need to select a good lambda. For that we will be using a custom grid of values ranging from 10^(-4) to 10^4 for possible values of lambda.
+We will be using caret with our own custom regressor to see which lambda got the best result. 
+
+```{r}
+# -------
+#  Ridge
+# -------
+
+ridge_fit <- list(library="BonusLab",
+                type="Regression",
+
+                parameters=data.frame(
+                  parameter="lambda",
+                  class = "numeric",
+                  label = "Lambda"),
+
+                grid = expand.grid(lambda = 10^seq(-4,4)),
+
+                prob = NULL,
+
+                predict = function(modelFit, newdata, ...){
+                  predict(modelFit, newdata = as.data.frame(newdata))},
+
+                fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+                  data <- data.frame(y = y, x)
+                  ridgereg(y ~ ., data = data, lambda = param$lambda)}
+                )
+
+ridge_fit <- caret::train(
+  medv ~ .,
+  data = x_train,
+  method = ridge_fit,
+  tuneGrid = expand.grid(lambda = 10^seq(-4, 4)),
+  trControl = control
+)
+```
+
+## Comparing results
+
+```{r}
+# Predictions
+pred_ridge <- predict(ridge_fit, newdata = x_test)
+pred_forward <- predict(forward_fit, newdata = x_test)
+pred_null <- predict(null_fit, newdata = x_test)
+
+
+results <- data.frame(
+  Model = c("Ridge regression", "Forward selection", "Intercept-only"),
+  RMSE = c(
+    caret::RMSE(x_test$medv, pred_ridge),
+    caret::RMSE(x_test$medv, pred_forward),
+    caret::RMSE(x_test$medv, pred_null)
+  )
+)
+
+results
+```
+
+We can see in that when we use the test dataset, both the ridge regressor and the forward selection performed similarly well, with an RMSE less than 5. However, the intercept-only model had an RMSE value that doubles that of the other models.

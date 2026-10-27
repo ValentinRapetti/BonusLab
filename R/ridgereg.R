@@ -18,16 +18,23 @@ ridgereg <- function(formula, data, lambda){
   
   X <- model.matrix(formula, data)
   X <- scale(X, center = TRUE, scale = TRUE)[ , drop=FALSE]
+
+  # We fix the intercept and store the scaled values
   X[, 1] <- 1
+  scale <- data.frame(scale = attr(X, "scaled:scale"),
+                    center = attr(X, "scaled:center"))
+
   X <- X[, 1:ncol(X)]
   X[is.nan(X)] <- 0
+
   y <- data[[all.vars(formula)[1]]]
   y1 <- c(1:ncol(X)) *0
   y <- c(y,y1)
+
   X_original <- X
   X <- rbind(X, sqrt(lambda)*diag(ncol(X)))
   n <- nrow(X)
-  m<- ncol(X)
+  m <- ncol(X)
   
   Q <- diag(n)
   R <- X
@@ -46,11 +53,6 @@ ridgereg <- function(formula, data, lambda){
     s <- ifelse(v[i] >= 0, 1, -1)
     v[i] <- v[i] + s * normv
     
-    #alpha <- -sign(v[i]) * sqrt(sum(v**2))
-    #if (v[i] == 0) alpha <- -sqrt(sum(v**2))
-    
-    #v[i] <- v[i] - alpha
-    
     H <- diag(nrow(R)) - 2* (v %*% t(v)) / (t(v) %*% v)[1]
     
     # Update our matrixes
@@ -66,7 +68,11 @@ ridgereg <- function(formula, data, lambda){
   
   result <- list(coeffs = beta_hat,
                  predicted = prediction,
-                 call = match.call())
+                 call = match.call(),
+                 formula = formula,
+                 scale = scale,
+                 terms = terms(formula, data = data))
+
   class(result) <- "ridgereg"
   return(result)
 }
