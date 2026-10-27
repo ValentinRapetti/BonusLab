@@ -2,23 +2,25 @@
 % Please edit documentation in R/ridgereg.R
 \name{ridgereg}
 \alias{ridgereg}
-\title{Ridge Regression using least squares}
+\title{Ridge Regression using QR factorization}
 \usage{
 ridgereg(formula, data, lambda)
 }
 \arguments{
-\item{formula}{formula}
+\item{formula}{A model formula.}
 
-\item{data}{data.frame}
+\item{data}{A data frame containing the variables in the model.}
 
-\item{lambda}{non negative scalar}
+\item{lambda}{A non-negative regularization parameter.}
 }
 \value{
-linreg class object
+An object of class `"linreg"`.
 }
 \description{
-This funcction calculates the parameters for a linear regression for a given
-set of data, formula and lambda, the ridge regularization parameter. Befor estimating the regression we 
-standardise the covariates
-The output is an object of class "linreg"
+This function estimates the parameters of a ridge regression model for a given
+dataset, formula, and regularization parameter lambda. Before fitting the model
+using QR factorization, the predictor variables are standardized.
+}
+\details{
+The function returns an object of class `"linreg"`.
 }

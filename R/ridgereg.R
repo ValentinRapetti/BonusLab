@@ -1,31 +1,70 @@
-#' Ridge Regression using least squares
+#' Ridge Regression using QR factorization
 #'
-#' This funcction calculates the parameters for a linear regression for a given
-#'set of data, formula and lambda, the ridge regularization parameter. Befor estimating the regression we 
-#'standardise the covariates
-#'The output is an object of class "linreg"
+#' This function estimates the parameters of a ridge regression model for a given
+#' dataset, formula, and regularization parameter lambda. Before fitting the model
+#' using QR factorization, the predictor variables are standardized.
 #'
-#' @param formula formula
-#' @param data data.frame
-#' @param lambda non negative scalar
-#' @return linreg class object
+#' The function returns an object of class `"linreg"`.
+#'
+#' @param formula A model formula.
+#' @param data A data frame containing the variables in the model.
+#' @param lambda A non-negative regularization parameter.
+#'
+#' @return An object of class `"linreg"`.
 #' @export
 ridgereg <- function(formula, data, lambda){
   stopifnot(is.data.frame(data), class(formula)=="formula", 
             is.numeric(lambda) && length(lambda)==1 && !(lambda < 0))
-
+  
   X <- model.matrix(formula, data)
   X <- scale(X, center = TRUE, scale = TRUE)[ , drop=FALSE]
   X[, 1] <- 1
   X <- X[, 1:ncol(X)]
-
+  X[is.nan(X)] <- 0
   y <- data[[all.vars(formula)[1]]]
-
-  # check efficiency of beta calculation
-  Beta <- solve(t(X) %*% X + lambda*diag(ncol(X))) %*% t(X) %*% y
-
-  prediction <- X %*% Beta
-  result <- list(coeffs = Beta,
+  y1 <- c(1:ncol(X)) *0
+  y <- c(y,y1)
+  X_original <- X
+  X <- rbind(X, sqrt(lambda)*diag(ncol(X)))
+  n <- nrow(X)
+  m<- ncol(X)
+  
+  Q <- diag(n)
+  R <- X
+  
+  for(i in 1:m){
+    # Initialize our vector with zeros and then take the rest from our matrix
+    v <- seq_len(n)*0
+    v[i:n] <- R[i:n,i]
+    
+    # Calculate the Householder matrix
+    normv <- sqrt(sum(v^2))
+    
+    if (normv == 0)
+      next
+    
+    s <- ifelse(v[i] >= 0, 1, -1)
+    v[i] <- v[i] + s * normv
+    
+    #alpha <- -sign(v[i]) * sqrt(sum(v**2))
+    #if (v[i] == 0) alpha <- -sqrt(sum(v**2))
+    
+    #v[i] <- v[i] - alpha
+    
+    H <- diag(nrow(R)) - 2* (v %*% t(v)) / (t(v) %*% v)[1]
+    
+    # Update our matrixes
+    R <- H %*% R
+    Q <- Q %*% H
+  }
+  
+  R <- R[1:m,]
+  Q <- Q[,1:m]
+  
+  beta_hat <- solve(R) %*% t(Q) %*% y
+  prediction <- X_original %*% beta_hat
+  
+  result <- list(coeffs = beta_hat,
                  predicted = prediction,
                  call = match.call())
   class(result) <- "ridgereg"

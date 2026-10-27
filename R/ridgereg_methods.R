@@ -1,8 +1,9 @@
-#' Print ridgereg class object
+#' Print a ridgereg Object
 #'
-#' Print the coefficients and the call function of the ridge regression
+#' Prints the coefficients and the function call associated with a ridge
+#' regression model.
 #'
-#' @param x ridgereg object
+#' @param x a ridgereg object.
 #' @param ... other options
 #' @export
 print.ridgereg <- function(x, ...){
@@ -16,25 +17,25 @@ print.ridgereg <- function(x, ...){
 }
 
 
-#' Predictions of ridgereg object
+#' Predict from a ridgereg Object
 #'
-#' Returns all the predictions of the ridgereg object
+#' Returns the predicted values from a ridgereg object.
 #'
-#' @param x ridgereg object
-#' @return float list
-#' @param ... other options
+#' @param x a ridgereg object.
+#' @param ... other options.
+#' @return A numeric vector of predicted values.
 #' @export
 predict.ridgereg <- function(x, ...){
   return(x[["predicted"]])
 }
 
-#' Coefficients of ridgereg object
+#' Extract Coefficients from a ridgereg Object
 #'
-#' Returns all the coefficients of the ridgereg object
+#' Returns the regression coefficients from a ridgereg object.
 #'
-#' @param object ridgereg object
-#' @param ... other options
-#' @return float list
+#' @param object A ridgereg object.
+#' @param ... other options.
+#' @return A named numeric vector containing the estimated coefficients.
 #' @export
 coef.ridgereg <- function(object, ...){  
   coef_vector <- unlist(object["coeffs"])

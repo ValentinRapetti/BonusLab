@@ -2,18 +2,18 @@
 % Please edit documentation in R/ridgereg_methods.R
 \name{predict.ridgereg}
 \alias{predict.ridgereg}
-\title{Predictions of ridgereg object}
+\title{Predict from a ridgereg Object}
 \usage{
 \method{predict}{ridgereg}(x, ...)
 }
 \arguments{
-\item{x}{ridgereg object}
+\item{x}{a ridgereg object.}
 
-\item{...}{other options}
+\item{...}{other options.}
 }
 \value{
-float list
+A numeric vector of predicted values.
 }
 \description{
-Returns all the predictions of the ridgereg object
+Returns the predicted values from a ridgereg object.
 }

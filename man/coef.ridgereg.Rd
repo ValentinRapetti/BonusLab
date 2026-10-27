@@ -2,18 +2,18 @@
 % Please edit documentation in R/ridgereg_methods.R
 \name{coef.ridgereg}
 \alias{coef.ridgereg}
-\title{Coefficients of ridgereg object}
+\title{Extract Coefficients from a ridgereg Object}
 \usage{
 \method{coef}{ridgereg}(object, ...)
 }
 \arguments{
-\item{object}{ridgereg object}
+\item{object}{A ridgereg object.}
 
-\item{...}{other options}
+\item{...}{other options.}
 }
 \value{
-float list
+A named numeric vector containing the estimated coefficients.
 }
 \description{
-Returns all the coefficients of the ridgereg object
+Returns the regression coefficients from a ridgereg object.
 }

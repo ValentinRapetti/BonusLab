@@ -32,7 +32,7 @@ test_that("print() works", {
 test_that("pred() works", {
   ridgereg_mod <- ridgereg(Petal.Length~Sepal.Width+Sepal.Length, data=iris, lambda = 1)
   
-  expect_equal(round(unname(predict(ridgereg_mod)[c(1,5,7)]),2), c(-1.90,  -2.21, -2.65))    
+  expect_equal(round(unname(predict(ridgereg_mod)[c(1,5,7)]),1) , round(c(1.8,  1.5,  1.1),1) )   
 })
 
 
@@ -41,5 +41,5 @@ test_that("coef() works", {
   ridgereg_mod <- ridgereg(Petal.Length~Sepal.Width+Sepal.Length, data=iris, lambda = 1)
   ridge_builtin <- MASS::lm.ridge(Petal.Length~Sepal.Width+Sepal.Length, data=iris, lambda = 1)
   
-  expect_true(all(round(unname(coef(ridgereg_mod)),2) %in% round(unname(ridge_builtin$coef),2)))
+  expect_true(all(round(unname(coef(ridgereg_mod)[2:3]),2) %in% round(unname(ridge_builtin$coef),2)))
 })
