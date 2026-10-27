@@ -66,6 +66,18 @@ x_test <- BostonHousing[-train_index, ]
 control <- caret::trainControl(method = "cv", number = 10)
 ```
 
+We will begin by creating a simple linear regression model using all the covariates
+
+```{r}
+lm_fit <- caret::train(
+  medv ~ .,
+  data = x_train,
+  method = "lm",
+  trControl = control
+)
+```
+
+
 Now we want to use a forward selection model. For that we will use the method 'leapForward' for the training; loading the library 'leaps' is needed.
 As we cannot train with 0 covariates (only the intercept), we create the model by hand. 
 
@@ -128,14 +140,16 @@ ridge_fit <- caret::train(
 
 ```{r}
 # Predictions
+pred_lm <- predict(lm_fit, newdata = x_test)
 pred_ridge <- predict(ridge_fit, newdata = x_test)
 pred_forward <- predict(forward_fit, newdata = x_test)
 pred_null <- predict(null_fit, newdata = x_test)
 
 
 results <- data.frame(
-  Model = c("Ridge regression", "Forward selection", "Intercept-only"),
+  Model = c("Linear regression with all covariates", "Ridge regression", "Forward selection", "Intercept-only"),
   RMSE = c(
+    caret::RMSE(x_test$medv, pred_lm),
     caret::RMSE(x_test$medv, pred_ridge),
     caret::RMSE(x_test$medv, pred_forward),
     caret::RMSE(x_test$medv, pred_null)
@@ -145,4 +159,4 @@ results <- data.frame(
 results
 ```
 
-We can see in that when we use the test dataset, both the ridge regressor and the forward selection performed similarly well, with an RMSE less than 5. However, the intercept-only model had an RMSE value that doubles that of the other models.
+We can see in that when we use the test dataset; the linear regression with all the covariates, the ridge regressor and the forward selection performed similarly well, with an RMSE less than 5. However, the intercept-only model had an RMSE value that doubles that of the other models.
